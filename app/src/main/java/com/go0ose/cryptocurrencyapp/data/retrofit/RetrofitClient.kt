@@ -11,6 +11,9 @@ object RetrofitClient {
 
     private const val BASE_URl = "https://api.coingecko.com/api/v3/"
     const val USD = "usd"
+    const val SORT_BY_PRICE = "price_desc"
+    const val SORT_BY_ALPHABETICALLY = "id_asc"
+    const val SORT_BY_MARKET_CAP = "market_cap_desc"
 
     private var gson: Gson = GsonBuilder()
         .setLenient()

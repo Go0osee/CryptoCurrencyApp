@@ -1,8 +1,9 @@
-package com.go0ose.cryptocurrencyapp.presentation.splashscreen
+package com.go0ose.cryptocurrencyapp.presentation.screen.splashscreen
 
 import android.graphics.drawable.Drawable
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -14,6 +15,7 @@ class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
 
     private val binding: FragmentSplashScreenBinding by viewBinding()
     private val viewModel: SplashScreenViewModel by viewModel()
+    private lateinit var animation: AnimatedVectorDrawableCompat
 
     override fun onStart() {
         super.onStart()
@@ -27,22 +29,23 @@ class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
         lifecycleScope.launchWhenStarted {
             viewModel.stateCoins.collect { state ->
                 if (state) {
-                    // переход
+                    findNavController().navigate(R.id.mainScreenFragment)
+                    animation.stop()
                 }
             }
         }
     }
 
     private fun initAnimation() {
-        val animation =
-            AnimatedVectorDrawableCompat.create(requireContext(), R.drawable.anim_loading)
-        animation?.registerAnimationCallback(object : Animatable2Compat.AnimationCallback() {
+        animation =
+            AnimatedVectorDrawableCompat.create(requireContext(), R.drawable.anim_loading)!!
+        animation.registerAnimationCallback(object : Animatable2Compat.AnimationCallback() {
             override fun onAnimationEnd(drawable: Drawable?) {
                 binding.animImage.post { animation.start() }
             }
         })
         binding.animImage.setImageDrawable(animation)
-        animation?.start()
+        animation.start()
     }
 
     private fun initLoadingData() {

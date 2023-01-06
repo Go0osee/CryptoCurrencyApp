@@ -6,6 +6,26 @@
 
     <fragment
         android:id="@+id/splashScreenFragment"
-        android:name="com.go0ose.cryptocurrencyapp.presentation.splashscreen.SplashScreenFragment"
-        android:label="SplashScreenFragment" />
+        android:name="com.go0ose.cryptocurrencyapp.presentation.screen.splashscreen.SplashScreenFragment"
+        android:label="SplashScreenFragment" >
+        <action
+            android:id="@+id/action_splashScreenFragment_to_mainScreenFragment"
+            app:destination="@id/mainScreenFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/mainScreenFragment"
+        android:name="com.go0ose.cryptocurrencyapp.presentation.screen.mainscreen.MainScreenFragment"
+        android:label="MainScreenFragment" >
+        <action
+            android:id="@+id/action_mainScreenFragment_to_settingScreenFragment"
+            app:destination="@id/settingScreenFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/settingScreenFragment"
+        android:name="com.go0ose.cryptocurrencyapp.presentation.screen.settingscreen.SettingScreenFragment"
+        android:label="SettingScreenFragment" >
+        <action
+            android:id="@+id/action_settingScreenFragment_to_mainScreenFragment"
+            app:destination="@id/mainScreenFragment" />
+    </fragment>
 </navigation>
