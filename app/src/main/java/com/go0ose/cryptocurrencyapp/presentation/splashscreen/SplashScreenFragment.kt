@@ -15,12 +15,12 @@ class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
     private val binding: FragmentSplashScreenBinding by viewBinding()
     private val viewModel: SplashScreenViewModel by viewModel()
 
-
     override fun onStart() {
         super.onStart()
 
         initAnimation()
         initObserver()
+        initLoadingData()
     }
 
     private fun initObserver() {
@@ -43,5 +43,9 @@ class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
         })
         binding.animImage.setImageDrawable(animation)
         animation?.start()
+    }
+
+    private fun initLoadingData() {
+        viewModel.loadingData()
     }
 }
