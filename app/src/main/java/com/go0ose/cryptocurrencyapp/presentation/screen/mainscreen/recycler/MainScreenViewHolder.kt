@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.go0ose.cryptocurrencyapp.databinding.ItemCoinBinding
 import com.go0ose.cryptocurrencyapp.presentation.model.Coin
+import com.go0ose.cryptocurrencyapp.utils.setImageByUrl
 
 class MainScreenViewHolder(
     private val binding: ItemCoinBinding
@@ -24,6 +25,12 @@ class MainScreenViewHolder(
     }
 
     fun bind(item: Coin) {
-
+        with(binding) {
+            image.setImageByUrl(item.image)
+            symbol.text = item.symbol
+            name.text = item.name
+            price.text = "${item.currentPrice} $"
+            marketCap.text = "${item.marketCap.toLong()} $"
+        }
     }
 }

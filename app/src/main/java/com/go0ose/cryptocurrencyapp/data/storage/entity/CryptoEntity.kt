@@ -17,5 +17,5 @@ data class CryptoEntity(
     @ColumnInfo(name = "image")
     val image: String,
     @ColumnInfo(name = "marketCap")
-    val marketCap: Long
+    val marketCap: Double
 )

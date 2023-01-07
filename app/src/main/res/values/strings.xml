@@ -3,4 +3,9 @@
     <string name="main">Main</string>
     <string name="settings">Settings</string>
     <string name="сryptocurrencies">Cryptocurrencies</string>
+    <string name="sort">Sort</string>
+    <string name="cancel">Cancel</string>
+    <string name="ok">Ok</string>
+    <string name="by_price">By price</string>
+    <string name="alphabetically">Alphabetically</string>
 </resources>

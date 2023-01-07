@@ -33,6 +33,7 @@ class MainActivity : AppCompatActivity() {
             when (destination.id) {
                 R.id.splashScreenFragment -> binding.bottomNavigation.visibility = View.GONE
                 R.id.mainScreenFragment -> binding.bottomNavigation.visibility = View.VISIBLE
+                R.id.settingScreenFragment -> binding.bottomNavigation.visibility = View.VISIBLE
             }
         }
     }

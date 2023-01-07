@@ -10,7 +10,7 @@ data class CryptoResponse(
     @SerializedName("image")
     val image: String,
     @SerializedName("market_cap")
-    val marketCap: Long,
+    val marketCap: Double,
     @SerializedName("name")
     val name: String,
     @SerializedName("symbol")

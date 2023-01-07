@@ -6,5 +6,5 @@ data class Coin(
     val symbol: String,
     val currentPrice: Double,
     val image: String,
-    val marketCap: Long
+    val marketCap: Double
 )
