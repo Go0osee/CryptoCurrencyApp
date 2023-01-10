@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_mainScreenFragment_to_settingScreenFragment"
             app:destination="@id/settingScreenFragment" />
+        <action
+            android:id="@+id/action_mainScreenFragment_to_detailsScreenFragment"
+            app:destination="@id/detailsScreenFragment" />
     </fragment>
     <fragment
         android:id="@+id/settingScreenFragment"
@@ -26,6 +29,14 @@
         android:label="SettingScreenFragment" >
         <action
             android:id="@+id/action_settingScreenFragment_to_mainScreenFragment"
+            app:destination="@id/mainScreenFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailsScreenFragment"
+        android:name="com.go0ose.cryptocurrencyapp.presentation.screens.details.DetailsScreenFragment"
+        android:label="DetailsScreenFragment" >
+        <action
+            android:id="@+id/action_detailsScreenFragment_to_mainScreenFragment"
             app:destination="@id/mainScreenFragment" />
     </fragment>
 </navigation>

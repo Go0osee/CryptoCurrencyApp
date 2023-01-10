@@ -15,6 +15,12 @@ object RetrofitClient {
     const val SORT_BY_ALPHABETICALLY = "id_asc"
     const val SORT_BY_MARKET_CAP = "market_cap_desc"
 
+    const val ONE_DAY = "1"
+    const val ONE_WEEK = "7"
+    const val ONE_MONTH = "30"
+    const val ONE_YEAR = "365"
+    const val ALL = "max"
+
     private var gson: Gson = GsonBuilder()
         .setLenient()
         .create()

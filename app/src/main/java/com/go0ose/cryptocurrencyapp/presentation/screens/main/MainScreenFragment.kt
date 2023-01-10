@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import androidx.vectordrawable.graphics.drawable.Animatable2Compat
@@ -18,6 +19,7 @@ import com.go0ose.cryptocurrencyapp.presentation.screens.main.recycler.OnItemCli
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
+
 class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
 
     private val binding: FragmentMainScreenBinding by viewBinding()
@@ -27,7 +29,15 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
     private val onItemListener by lazy {
         object : OnItemClickListener {
             override fun onItemClick(coin: Coin) {
-                // переход
+
+                val bundle = Bundle()
+                bundle.putString("icon", coin.image)
+                bundle.putString("name", coin.name)
+                bundle.putString("id", coin.id)
+                bundle.putDouble("price", coin.currentPrice)
+                bundle.putDouble("marketCap", coin.marketCap)
+
+                findNavController().navigate(R.id.detailsScreenFragment, bundle)
             }
         }
     }

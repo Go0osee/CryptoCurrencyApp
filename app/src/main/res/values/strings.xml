@@ -8,4 +8,10 @@
     <string name="ok">Ok</string>
     <string name="by_price">By price</string>
     <string name="alphabetically">Alphabetically</string>
+    <string name="all">ALL</string>
+    <string name="_1y">1Y</string>
+    <string name="_1m">1M</string>
+    <string name="_1w">1W</string>
+    <string name="_24h">24H</string>
+    <string name="market_cap">Market cap</string>
 </resources>

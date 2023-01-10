@@ -2,6 +2,7 @@ package com.go0ose.cryptocurrencyapp.data
 
 import com.go0ose.cryptocurrencyapp.data.retrofit.CryptoApi
 import com.go0ose.cryptocurrencyapp.data.retrofit.CryptoResponse
+import com.go0ose.cryptocurrencyapp.data.retrofit.MarketChart
 import com.go0ose.cryptocurrencyapp.data.storage.CryptoDao
 import com.go0ose.cryptocurrencyapp.data.storage.entity.CryptoEntity
 import com.go0ose.cryptocurrencyapp.domain.CryptoRepository
@@ -28,5 +29,9 @@ class CryptoRepositoryImpl(
 
     override suspend fun getCryptoListFromDataBase(): List<CryptoEntity> {
         return cryptoDao.getCryptoListFromDataBase()
+    }
+
+    override suspend fun getMarketChartFromApi(id: String, days: String): Response<MarketChart> {
+        return cryptoApi.getMarketChartFromApi(id, days)
     }
 }

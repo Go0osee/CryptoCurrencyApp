@@ -16,3 +16,8 @@ data class CryptoResponse(
     @SerializedName("symbol")
     val symbol: String
 )
+
+data class MarketChart(
+    @SerializedName("prices")
+    val prices: List<List<Double>>
+)
