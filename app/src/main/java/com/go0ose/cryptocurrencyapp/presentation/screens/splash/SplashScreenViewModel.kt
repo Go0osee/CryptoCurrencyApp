@@ -1,4 +1,4 @@
-package com.go0ose.cryptocurrencyapp.presentation.screen.splashscreen
+package com.go0ose.cryptocurrencyapp.presentation.screens.splash
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

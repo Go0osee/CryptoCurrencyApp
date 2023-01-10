@@ -1,4 +1,4 @@
-package com.go0ose.cryptocurrencyapp.presentation.screen.splashscreen
+package com.go0ose.cryptocurrencyapp.presentation.screens.splash
 
 import android.graphics.drawable.Drawable
 import androidx.fragment.app.Fragment

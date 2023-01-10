@@ -1,15 +1,17 @@
-package com.go0ose.cryptocurrencyapp.presentation.screen.mainscreen.recycler
+package com.go0ose.cryptocurrencyapp.presentation.screens.main.recycler
 
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.go0ose.cryptocurrencyapp.presentation.model.Coin
 
-class MainScreenAdapter : RecyclerView.Adapter<MainScreenViewHolder>() {
+class MainScreenAdapter(
+    private val onItemClickListener: OnItemClickListener
+) : RecyclerView.Adapter<MainScreenViewHolder>() {
 
     var items: MutableList<Coin> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MainScreenViewHolder {
-        return MainScreenViewHolder.newInstance(parent)
+        return MainScreenViewHolder.newInstance(parent, onItemClickListener)
     }
 
     override fun onBindViewHolder(holder: MainScreenViewHolder, position: Int) {
@@ -23,7 +25,7 @@ class MainScreenAdapter : RecyclerView.Adapter<MainScreenViewHolder>() {
         notifyDataSetChanged()
     }
 
-    fun refresh() {
+    fun clear() {
         items.clear()
         notifyDataSetChanged()
     }

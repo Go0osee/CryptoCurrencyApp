@@ -1,4 +1,4 @@
-package com.go0ose.cryptocurrencyapp.presentation.screen.mainscreen
+package com.go0ose.cryptocurrencyapp.presentation.screens.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,6 +26,7 @@ class MainScreenViewModel(
 
 
     fun loadCoinsFromDataBase() {
+        _coinsList.value = emptyList()
         viewModelScope.launch {
             _coinsList.value = cryptoInteractor.getCryptoListFromDataBase()
         }

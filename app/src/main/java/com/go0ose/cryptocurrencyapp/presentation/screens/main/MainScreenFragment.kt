@@ -1,6 +1,5 @@
-package com.go0ose.cryptocurrencyapp.presentation.screen.mainscreen
+package com.go0ose.cryptocurrencyapp.presentation.screens.main
 
-import android.app.AlertDialog
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
@@ -13,27 +12,45 @@ import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.go0ose.cryptocurrencyapp.R
 import com.go0ose.cryptocurrencyapp.databinding.FragmentMainScreenBinding
-import com.go0ose.cryptocurrencyapp.presentation.screen.mainscreen.recycler.MainScreenAdapter
+import com.go0ose.cryptocurrencyapp.presentation.model.Coin
+import com.go0ose.cryptocurrencyapp.presentation.screens.main.recycler.MainScreenAdapter
+import com.go0ose.cryptocurrencyapp.presentation.screens.main.recycler.OnItemClickListener
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
 
     private val binding: FragmentMainScreenBinding by viewBinding()
     private val viewModel: MainScreenViewModel by viewModel()
-    private var adapter = MainScreenAdapter()
     private lateinit var animation: AnimatedVectorDrawableCompat
+
+    private val onItemListener by lazy {
+        object : OnItemClickListener {
+            override fun onItemClick(coin: Coin) {
+                // переход
+            }
+        }
+    }
+
+    private var adapter = MainScreenAdapter(onItemListener)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.recyclerView.adapter = adapter
-        loadCoinsFromDataBase()
-        viewModel.refresh()
         initAnimation()
         initObservers()
         initScrolledListener()
         initSwipeRefreshListener()
         initSortClickListener()
+    }
+
+    override fun onResume() {
+        super.onResume()
+
+        viewModel.sortId = 2
+        adapter.clear()
+        loadCoinsFromDataBase()
     }
 
     private fun initScrolledListener() {
@@ -63,7 +80,9 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         lifecycleScope.launchWhenStarted {
             viewModel.coinsList.collect { listCoins ->
                 adapter.submitList(listCoins)
-                viewModel.setLoadingState(false)
+                if(listCoins.isNotEmpty()){
+                    viewModel.setLoadingState(false)
+                }
                 binding.swipeRefresh.isRefreshing = false
             }
         }
@@ -103,7 +122,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
     private fun initSwipeRefreshListener() {
         binding.swipeRefresh.setOnRefreshListener {
             viewModel.setLoadingState(true)
-            adapter.refresh()
+            adapter.clear()
             viewModel.refresh()
         }
     }
@@ -119,11 +138,12 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
 
         var dSortId = 0
 
-        AlertDialog.Builder(this.requireContext())
+        MaterialAlertDialogBuilder(this.requireContext())
             .setTitle(resources.getString(R.string.sort))
             .setPositiveButton(resources.getString(R.string.ok)) { _, _ ->
                 viewModel.sortId = dSortId
-                adapter.refresh()
+                viewModel.setLoadingState(true)
+                adapter.clear()
                 viewModel.refresh()
             }
             .setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ ->

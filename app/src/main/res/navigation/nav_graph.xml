@@ -6,7 +6,7 @@
 
     <fragment
         android:id="@+id/splashScreenFragment"
-        android:name="com.go0ose.cryptocurrencyapp.presentation.screen.splashscreen.SplashScreenFragment"
+        android:name="com.go0ose.cryptocurrencyapp.presentation.screens.splash.SplashScreenFragment"
         android:label="SplashScreenFragment" >
         <action
             android:id="@+id/action_splashScreenFragment_to_mainScreenFragment"
@@ -14,7 +14,7 @@
     </fragment>
     <fragment
         android:id="@+id/mainScreenFragment"
-        android:name="com.go0ose.cryptocurrencyapp.presentation.screen.mainscreen.MainScreenFragment"
+        android:name="com.go0ose.cryptocurrencyapp.presentation.screens.main.MainScreenFragment"
         android:label="MainScreenFragment" >
         <action
             android:id="@+id/action_mainScreenFragment_to_settingScreenFragment"
@@ -22,7 +22,7 @@
     </fragment>
     <fragment
         android:id="@+id/settingScreenFragment"
-        android:name="com.go0ose.cryptocurrencyapp.presentation.screen.settingscreen.SettingScreenFragment"
+        android:name="com.go0ose.cryptocurrencyapp.presentation.screens.settings.SettingScreenFragment"
         android:label="SettingScreenFragment" >
         <action
             android:id="@+id/action_settingScreenFragment_to_mainScreenFragment"
