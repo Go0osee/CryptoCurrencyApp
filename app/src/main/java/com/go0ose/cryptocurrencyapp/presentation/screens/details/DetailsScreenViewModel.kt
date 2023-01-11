@@ -26,15 +26,26 @@ class DetailsScreenViewModel(
                 try {
                     _state.value =
                         DetailsState.SuccessState(
-                            cryptoInteractor.getCoinDetailsFromApi(
-                                id,
-                                amount
-                            )
+                            cryptoInteractor.getCoinDetailsFromApi(id, amount)
                         )
                 } catch (e: Throwable) {
                     _state.value = DetailsState.ErrorState(e.message.toString())
                 }
             }
+        }
+    }
+
+    fun chooseFormat(cPrice: Double): String {
+        return when {
+            cPrice < 0.0000001 -> "%.10f"
+            cPrice < 0.000001 -> "%.9f"
+            cPrice < 0.00001 -> "%.8f"
+            cPrice < 0.0001 -> "%.7f"
+            cPrice < 0.001 -> "%.6f"
+            cPrice < 0.01 -> "%.5f"
+            cPrice < 0.1 -> "%.4f"
+            cPrice < 10 -> "%.3f"
+            else -> "%.2f"
         }
     }
 }

@@ -86,7 +86,7 @@ class DetailsScreenFragment : Fragment(R.layout.fragment_details_screen) {
     private fun initClickListeners() {
         with(binding) {
             toolbar.setNavigationOnClickListener {
-                findNavController().popBackStack()
+                findNavController().navigate(R.id.mainScreenFragment)
             }
             item1day.setOnClickListener {
                 deselectAll()
@@ -141,12 +141,17 @@ class DetailsScreenFragment : Fragment(R.layout.fragment_details_screen) {
     @SuppressLint("SetTextI18n")
     private fun initView(coinDetails: CoinDetails) {
         with(binding) {
-            price.text = "%.2f".format(arguments?.getDouble("price")) + " $"
+
+            val cPrice = arguments?.getDouble("price")!!
+            val format = viewModel.chooseFormat(cPrice)
+
+            price.text = format.format(cPrice) + " $"
             marketCap.text = "$ " + arguments?.getDouble("marketCap")?.let { formatMarketCap(it) }
             changePercentage.text = coinDetails.changePercentage
-            maxPrice.text = coinDetails.maxPrice
-            minPrice.text = coinDetails.minPrice
+            maxPrice.text = format.format(coinDetails.maxPrice) + " $"
+            minPrice.text = format.format(coinDetails.minPrice) + " $"
             initChart(coinDetails.listEntry)
+
         }
     }
 

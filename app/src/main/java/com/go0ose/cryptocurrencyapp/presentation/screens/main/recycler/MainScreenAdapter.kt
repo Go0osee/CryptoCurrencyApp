@@ -25,7 +25,7 @@ class MainScreenAdapter(
         notifyDataSetChanged()
     }
 
-    fun clear() {
+    fun clearList() {
         items.clear()
         notifyDataSetChanged()
     }

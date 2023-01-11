@@ -1,22 +1,23 @@
 package com.go0ose.cryptocurrencyapp.presentation.screens.main
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.vectordrawable.graphics.drawable.Animatable2Compat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.go0ose.cryptocurrencyapp.R
 import com.go0ose.cryptocurrencyapp.databinding.FragmentMainScreenBinding
 import com.go0ose.cryptocurrencyapp.presentation.model.Coin
+import com.go0ose.cryptocurrencyapp.presentation.model.MainState
 import com.go0ose.cryptocurrencyapp.presentation.screens.main.recycler.MainScreenAdapter
 import com.go0ose.cryptocurrencyapp.presentation.screens.main.recycler.OnItemClickListener
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
@@ -30,13 +31,13 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         object : OnItemClickListener {
             override fun onItemClick(coin: Coin) {
 
-                val bundle = Bundle()
-                bundle.putString("icon", coin.image)
-                bundle.putString("name", coin.name)
-                bundle.putString("id", coin.id)
-                bundle.putDouble("price", coin.currentPrice)
-                bundle.putDouble("marketCap", coin.marketCap)
-
+                val bundle = Bundle().apply {
+                    putString("icon", coin.image)
+                    putString("name", coin.name)
+                    putString("id", coin.id)
+                    putDouble("price", coin.currentPrice)
+                    putDouble("marketCap", coin.marketCap)
+                }
                 findNavController().navigate(R.id.detailsScreenFragment, bundle)
             }
         }
@@ -48,19 +49,13 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.recyclerView.adapter = adapter
+        adapter.clearList()
+        viewModel.loadCoinsFromDataBase()
         initAnimation()
         initObservers()
         initScrolledListener()
         initSwipeRefreshListener()
         initSortClickListener()
-    }
-
-    override fun onResume() {
-        super.onResume()
-
-        viewModel.sortId = 2
-        adapter.clear()
-        loadCoinsFromDataBase()
     }
 
     private fun initScrolledListener() {
@@ -75,10 +70,8 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
                     val totalItemCount = layoutManager.itemCount
                     val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
 
-                    if (
-                        !viewModel.isLoading.value &&
-                        (visibleItemCount + firstVisibleItemPosition) >= totalItemCount
-                    ) {
+                    if (viewModel.state.value != MainState.LoadingState &&
+                        (visibleItemCount + firstVisibleItemPosition) >= totalItemCount) {
                         viewModel.loadNextPage()
                     }
                 }
@@ -87,26 +80,25 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
     }
 
     private fun initObservers() {
-        lifecycleScope.launchWhenStarted {
-            viewModel.coinsList.collect { listCoins ->
-                adapter.submitList(listCoins)
-                if(listCoins.isNotEmpty()){
-                    viewModel.setLoadingState(false)
-                }
-                binding.swipeRefresh.isRefreshing = false
-            }
-        }
 
         lifecycleScope.launchWhenStarted {
-            viewModel.isLoading.collect { loadingState ->
-                when (loadingState) {
-                    true -> {
+            viewModel.state.collectLatest { state ->
+                when (state) {
+                    is MainState.SuccessState -> {
+                        binding.animImage.visibility = View.GONE
+                        animation.stop()
+
+                        adapter.submitList(state.list)
+                        binding.swipeRefresh.isRefreshing = false
+                    }
+                    is MainState.LoadingState -> {
                         binding.animImage.visibility = View.VISIBLE
                         animation.start()
                     }
-                    false -> {
+                    is MainState.ErrorState -> {
                         binding.animImage.visibility = View.GONE
                         animation.stop()
+                        Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -116,35 +108,24 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
     private fun initAnimation() {
         animation =
             AnimatedVectorDrawableCompat.create(requireContext(), R.drawable.anim_loading)!!
-
-        animation.registerAnimationCallback(object : Animatable2Compat.AnimationCallback() {
-            override fun onAnimationEnd(drawable: Drawable?) {
-//              binding.animImage.post { animation.start() }
-            }
-        })
         binding.animImage.setImageDrawable(animation)
-    }
-
-    private fun loadCoinsFromDataBase() {
-        viewModel.loadCoinsFromDataBase()
     }
 
     private fun initSwipeRefreshListener() {
         binding.swipeRefresh.setOnRefreshListener {
-            viewModel.setLoadingState(true)
-            adapter.clear()
+            adapter.clearList()
             viewModel.refresh()
         }
     }
 
     private fun initSortClickListener() {
         binding.toolbar.menu.findItem(R.id.sort).setOnMenuItemClickListener {
-            showAlertDialog()
+            showSortAlertDialog()
             true
         }
     }
 
-    private fun showAlertDialog() {
+    private fun showSortAlertDialog() {
 
         var dSortId = 0
 
@@ -152,8 +133,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
             .setTitle(resources.getString(R.string.sort))
             .setPositiveButton(resources.getString(R.string.ok)) { _, _ ->
                 viewModel.sortId = dSortId
-                viewModel.setLoadingState(true)
-                adapter.clear()
+                adapter.clearList()
                 viewModel.refresh()
             }
             .setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ ->

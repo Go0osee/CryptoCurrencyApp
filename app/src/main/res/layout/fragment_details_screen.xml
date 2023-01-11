@@ -30,14 +30,17 @@
 
             <TextView
                 android:id="@+id/name"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginStart="16dp"
                 android:fontFamily="@font/roboto_medium"
+                android:maxLines="1"
                 android:textColor="@color/white"
+                android:layout_marginEnd="32dp"
                 android:textSize="20dp"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@id/icon"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:text="Bitcoin" />
@@ -87,11 +90,11 @@
         android:layout_height="27dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
+        android:background="@drawable/background_item_chart"
         android:fontFamily="@font/roboto_regular"
         android:gravity="center"
         android:text="@string/_24h"
         android:textColor="@color/white"
-        android:background="@drawable/background_item_chart"
         android:textSize="16dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/chart" />

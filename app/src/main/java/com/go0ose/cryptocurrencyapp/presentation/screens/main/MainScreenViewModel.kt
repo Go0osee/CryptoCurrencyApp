@@ -6,7 +6,7 @@ import com.go0ose.cryptocurrencyapp.data.retrofit.RetrofitClient.SORT_BY_ALPHABE
 import com.go0ose.cryptocurrencyapp.data.retrofit.RetrofitClient.SORT_BY_MARKET_CAP
 import com.go0ose.cryptocurrencyapp.data.retrofit.RetrofitClient.SORT_BY_PRICE
 import com.go0ose.cryptocurrencyapp.domain.CryptoInteractor
-import com.go0ose.cryptocurrencyapp.presentation.model.Coin
+import com.go0ose.cryptocurrencyapp.presentation.model.MainState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -15,42 +15,42 @@ class MainScreenViewModel(
     private val cryptoInteractor: CryptoInteractor
 ) : ViewModel() {
 
-    var page = 1
+    private var page = 1
     var sortId = 2
 
-    private val _coinsList = MutableStateFlow<List<Coin>>(emptyList())
-    val coinsList: StateFlow<List<Coin>> get() = _coinsList
-
-    private val _isLoading = MutableStateFlow(false)
-    val isLoading: StateFlow<Boolean> get() = _isLoading
+    private val _state = MutableStateFlow<MainState>(MainState.LoadingState)
+    val state: StateFlow<MainState> = _state
 
 
     fun loadCoinsFromDataBase() {
-        _coinsList.value = emptyList()
+        _state.value = MainState.SuccessState(emptyList())
         viewModelScope.launch {
-            _coinsList.value = cryptoInteractor.getCryptoListFromDataBase()
+            _state.value = MainState.SuccessState(cryptoInteractor.getCryptoListFromDataBase())
         }
     }
 
     fun loadNextPage() {
+        _state.value = MainState.LoadingState
         page++
-        setLoadingState(true)
-        viewModelScope.launch {
-            _coinsList.value =
-                cryptoInteractor.getCryptoListFromApi(chooseSortTypeById(sortId), page)
-        }
+        loadCoinsFromApi()
     }
 
-    fun setLoadingState(boolean: Boolean) {
-        _isLoading.value = boolean
-    }
 
     fun refresh() {
+        _state.value = MainState.LoadingState
         page = 1
-        _coinsList.value = emptyList()
+        loadCoinsFromApi()
+    }
+
+    private fun loadCoinsFromApi() {
         viewModelScope.launch {
-            _coinsList.value =
-                cryptoInteractor.getCryptoListFromApi(chooseSortTypeById(sortId), page)
+            try {
+                _state.value = MainState.SuccessState(
+                    cryptoInteractor.getCryptoListFromApi(chooseSortTypeById(sortId), page)
+                )
+            } catch (e: Throwable) {
+                _state.value = MainState.ErrorState(e.message.toString())
+            }
         }
     }
 
