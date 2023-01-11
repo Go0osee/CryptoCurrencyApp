@@ -12,4 +12,5 @@
     <color name="text_dark_gray">#404040</color>
     <color name="text_red">#FD8888</color>
     <color name="gray">#C4C4C4</color>
+    <color name="second_color">#F8A23A</color>
 </resources>

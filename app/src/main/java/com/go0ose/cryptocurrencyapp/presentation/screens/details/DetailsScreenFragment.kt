@@ -5,11 +5,16 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import android.widget.TextView
+import android.widget.Toast
+import androidx.core.content.ContextCompat.getColor
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import by.kirich1409.viewbindingdelegate.viewBinding
+import com.github.mikephil.charting.data.Entry
+import com.github.mikephil.charting.data.LineData
+import com.github.mikephil.charting.data.LineDataSet
 import com.go0ose.cryptocurrencyapp.R
 import com.go0ose.cryptocurrencyapp.data.retrofit.RetrofitClient.ALL
 import com.go0ose.cryptocurrencyapp.data.retrofit.RetrofitClient.ONE_DAY
@@ -68,7 +73,11 @@ class DetailsScreenFragment : Fragment(R.layout.fragment_details_screen) {
                         binding.animImage.visibility = View.VISIBLE
                         animation.start()
                     }
-                    is DetailsState.ErrorState -> {}
+                    is DetailsState.ErrorState -> {
+                        binding.animImage.visibility = View.GONE
+                        animation.stop()
+                        Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
         }
@@ -137,7 +146,34 @@ class DetailsScreenFragment : Fragment(R.layout.fragment_details_screen) {
             changePercentage.text = coinDetails.changePercentage
             maxPrice.text = coinDetails.maxPrice
             minPrice.text = coinDetails.minPrice
+            initChart(coinDetails.listEntry)
+        }
+    }
 
+    private fun initChart(listEntry: List<Entry>) {
+        with(binding.chart) {
+
+            xAxis.setDrawLabels(false)
+            xAxis.setDrawGridLines(false)
+            xAxis.setDrawAxisLine(false)
+            axisRight.setDrawLabels(false)
+            axisRight.setDrawGridLines(false)
+            axisRight.setDrawAxisLine(false)
+            axisLeft.setDrawLabels(false)
+            axisLeft.setDrawGridLines(false)
+            axisLeft.setDrawAxisLine(false)
+
+            description.isEnabled = false
+            legend.isEnabled = false
+
+            val set = LineDataSet(listEntry, "chart").apply {
+                color = getColor(requireContext(), R.color.second_color)
+                lineWidth = 2f
+                setDrawCircles(false)
+            }
+
+            data = LineData(set)
+            invalidate()
         }
     }
 }

@@ -22,9 +22,18 @@ class DetailsScreenViewModel(
         if (days != amount) {
             _state.value = DetailsState.LoadingState
             amount = days
-
             viewModelScope.launch {
-                _state.value = DetailsState.SuccessState(cryptoInteractor.getCoinDetailsFromApi(id, amount))
+                try {
+                    _state.value =
+                        DetailsState.SuccessState(
+                            cryptoInteractor.getCoinDetailsFromApi(
+                                id,
+                                amount
+                            )
+                        )
+                } catch (e: Throwable) {
+                    _state.value = DetailsState.ErrorState(e.message.toString())
+                }
             }
         }
     }
