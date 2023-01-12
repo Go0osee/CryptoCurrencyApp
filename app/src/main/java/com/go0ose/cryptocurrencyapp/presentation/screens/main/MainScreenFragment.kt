@@ -1,7 +1,10 @@
 package com.go0ose.cryptocurrencyapp.presentation.screens.main
 
 import android.os.Bundle
+import android.os.Parcelable
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -31,26 +34,51 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
         object : OnItemClickListener {
             override fun onItemClick(coin: Coin) {
 
-                val bundle = Bundle().apply {
-                    putString("icon", coin.image)
-                    putString("name", coin.name)
-                    putString("id", coin.id)
-                    putDouble("price", coin.currentPrice)
-                    putDouble("marketCap", coin.marketCap)
-                }
-                findNavController().navigate(R.id.detailsScreenFragment, bundle)
+                findNavController().navigate(
+                    R.id.action_mainScreenFragment_to_detailsScreenFragment,
+                    createBundle(coin)
+                )
             }
         }
     }
 
     private var adapter = MainScreenAdapter(onItemListener)
+    private var recyclerViewState: Parcelable? = null
+    private lateinit var recyclerView: RecyclerView
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        val view = inflater.inflate(R.layout.fragment_main_screen, container, false)
+        recyclerView = view.findViewById(R.id.recyclerView)
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager = LinearLayoutManager(context)
+        return view
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putParcelable(
+            "recyclerViewState",
+            recyclerView.layoutManager?.onSaveInstanceState()
+        )
+    }
+
+    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+        super.onViewStateRestored(savedInstanceState)
+        if (savedInstanceState != null) {
+            recyclerViewState = savedInstanceState.getParcelable("recyclerViewState")
+            recyclerViewState?.let { recyclerView.layoutManager?.onRestoreInstanceState(it) }
+        } else {
+            viewModel.loadCoinsFromDataBase()
+        }
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.recyclerView.adapter = adapter
-        adapter.clearList()
-        viewModel.loadCoinsFromDataBase()
         initAnimation()
         initObservers()
         initScrolledListener()
@@ -71,7 +99,8 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
                     val firstVisibleItemPosition = layoutManager.findFirstVisibleItemPosition()
 
                     if (viewModel.state.value != MainState.LoadingState &&
-                        (visibleItemCount + firstVisibleItemPosition) >= totalItemCount) {
+                        (visibleItemCount + firstVisibleItemPosition) >= totalItemCount
+                    ) {
                         viewModel.loadNextPage()
                     }
                 }
@@ -87,8 +116,9 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
                     is MainState.SuccessState -> {
                         binding.animImage.visibility = View.GONE
                         animation.stop()
-
-                        adapter.submitList(state.list)
+                        if (!(adapter.items.any { state.list.map { it.id }.contains(it.id) })){
+                            adapter.submitList(state.list)
+                        }
                         binding.swipeRefresh.isRefreshing = false
                     }
                     is MainState.LoadingState -> {
@@ -150,4 +180,12 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
             }
             .show()
     }
+
+     fun createBundle(coin:Coin) = Bundle().apply {
+         putString("icon", coin.image)
+         putString("name", coin.name)
+         putString("id", coin.id)
+         putDouble("price", coin.currentPrice)
+         putDouble("marketCap", coin.marketCap)
+     }
 }

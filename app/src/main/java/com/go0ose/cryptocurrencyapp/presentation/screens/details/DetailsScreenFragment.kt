@@ -86,7 +86,7 @@ class DetailsScreenFragment : Fragment(R.layout.fragment_details_screen) {
     private fun initClickListeners() {
         with(binding) {
             toolbar.setNavigationOnClickListener {
-                findNavController().navigate(R.id.mainScreenFragment)
+                findNavController().navigateUp()
             }
             item1day.setOnClickListener {
                 deselectAll()
