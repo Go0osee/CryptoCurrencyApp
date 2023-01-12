@@ -14,4 +14,10 @@
     <string name="_1w">1W</string>
     <string name="_24h">24H</string>
     <string name="market_cap">Market cap</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="date_of_birth">Date of Birth</string>
+    <string name="download_photo">Download photo</string>
+    <string name="take_picture">Take a picture</string>
+    <string name="pick_from_gallery">Pick from gallery</string>
 </resources>

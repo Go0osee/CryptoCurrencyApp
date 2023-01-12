@@ -13,4 +13,5 @@
     <color name="text_red">#FD8888</color>
     <color name="gray">#C4C4C4</color>
     <color name="second_color">#F8A23A</color>
+    <color name="photo_button_background">#33000000</color>
 </resources>
