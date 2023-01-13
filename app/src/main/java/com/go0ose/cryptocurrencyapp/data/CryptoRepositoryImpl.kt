@@ -5,7 +5,9 @@ import com.go0ose.cryptocurrencyapp.data.retrofit.CryptoResponse
 import com.go0ose.cryptocurrencyapp.data.retrofit.MarketChart
 import com.go0ose.cryptocurrencyapp.data.storage.CryptoDao
 import com.go0ose.cryptocurrencyapp.data.storage.entity.CryptoEntity
+import com.go0ose.cryptocurrencyapp.data.storage.entity.UserEntity
 import com.go0ose.cryptocurrencyapp.domain.CryptoRepository
+import kotlinx.coroutines.flow.Flow
 import retrofit2.Response
 
 class CryptoRepositoryImpl(
@@ -33,5 +35,17 @@ class CryptoRepositoryImpl(
 
     override suspend fun getMarketChartFromApi(id: String, days: String): Response<MarketChart> {
         return cryptoApi.getMarketChartFromApi(id, days)
+    }
+
+    override fun getFlowUser(): Flow<UserEntity> {
+        return cryptoDao.getFlowUser()
+    }
+
+    override suspend fun insertUser(user: UserEntity) {
+        cryptoDao.insertUser(user)
+    }
+
+    override suspend fun updateUser(user: UserEntity) {
+        cryptoDao.updateUser(user)
     }
 }

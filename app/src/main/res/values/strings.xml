@@ -20,4 +20,6 @@
     <string name="download_photo">Download photo</string>
     <string name="take_picture">Take a picture</string>
     <string name="pick_from_gallery">Pick from gallery</string>
+    <string name="permission_is_required">Permission is required</string>
+    <string name="saved">Saved</string>
 </resources>

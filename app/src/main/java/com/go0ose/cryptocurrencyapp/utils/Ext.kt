@@ -4,9 +4,15 @@ import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 
-fun ImageView.setImageByUrl(Url: String?) {
+fun ImageView.setImageByUrl(url: String?) {
     Glide.with(context)
-        .load(Url)
+        .load(url)
         .apply(RequestOptions.circleCropTransform())
+        .into(this)
+}
+
+fun ImageView.setImageByUri(uri: String?) {
+    Glide.with(context)
+        .load(uri)
         .into(this)
 }

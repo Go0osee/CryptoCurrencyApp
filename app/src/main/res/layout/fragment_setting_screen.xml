@@ -18,9 +18,11 @@
     <ImageView
         android:id="@+id/avatar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="240dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:scaleType="center"
+        android:layout_marginTop="8dp"
         android:src="@drawable/ic_avatar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -48,11 +50,12 @@
         android:background="@drawable/background_edit_settings"
         android:fontFamily="@font/roboto_regular"
         android:hint="@string/first_name"
+        android:imeOptions="actionDone"
+        android:inputType="text"
         android:padding="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/avatar" />
-
 
     <EditText
         android:id="@+id/lastName"
@@ -64,11 +67,12 @@
         android:background="@drawable/background_edit_settings"
         android:fontFamily="@font/roboto_regular"
         android:hint="@string/last_name"
+        android:imeOptions="actionDone"
+        android:inputType="text"
         android:padding="16dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/firstName" />
-
 
     <EditText
         android:id="@+id/dayOfBirth"

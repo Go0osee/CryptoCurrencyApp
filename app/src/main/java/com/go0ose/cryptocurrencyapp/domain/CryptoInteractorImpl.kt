@@ -1,10 +1,12 @@
 package com.go0ose.cryptocurrencyapp.domain
 
+import com.go0ose.cryptocurrencyapp.data.storage.entity.UserEntity
 import com.go0ose.cryptocurrencyapp.presentation.model.Coin
 import com.go0ose.cryptocurrencyapp.presentation.model.CoinDetails
 import com.go0ose.cryptocurrencyapp.utils.toCoin
 import com.go0ose.cryptocurrencyapp.utils.toCoinDetails
 import com.go0ose.cryptocurrencyapp.utils.toCryptoEntity
+import kotlinx.coroutines.flow.Flow
 
 class CryptoInteractorImpl(
     private val cryptoRepository: CryptoRepository
@@ -45,5 +47,17 @@ class CryptoInteractorImpl(
         } else {
             throw Throwable(response.errorBody().toString())
         }
+    }
+
+    override fun getFlowUser(): Flow<UserEntity> {
+        return cryptoRepository.getFlowUser()
+    }
+
+    override suspend fun insertUser(user: UserEntity) {
+        cryptoRepository.insertUser(user)
+    }
+
+    override suspend fun updateUser(user: UserEntity) {
+       cryptoRepository.updateUser(user)
     }
 }

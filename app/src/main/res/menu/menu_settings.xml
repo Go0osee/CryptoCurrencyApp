@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/save"
-        android:icon="@drawable/ic_save"
+        android:icon="@drawable/ic_save_unlock"
         android:title=""
         app:showAsAction="always" />
 </menu>
