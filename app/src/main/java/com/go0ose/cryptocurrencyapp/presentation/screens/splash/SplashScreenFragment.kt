@@ -10,7 +10,7 @@ import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.go0ose.cryptocurrencyapp.R
 import com.go0ose.cryptocurrencyapp.databinding.FragmentSplashScreenBinding
-import com.go0ose.cryptocurrencyapp.presentation.model.SplashState
+import com.go0ose.cryptocurrencyapp.presentation.model.UiState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
@@ -32,14 +32,14 @@ class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
             viewModel.state.collect { state ->
 
                 when(state){
-                    is SplashState.SuccessState ->{
+                    is UiState.SuccessState<*> ->{
                         findNavController().navigate(R.id.mainScreenFragment)
                         animation.stop()
                     }
-                    is SplashState.LoadingState ->{
+                    is UiState.LoadingState ->{
                         animation.start()
                     }
-                    is SplashState.ErrorState ->{
+                    is UiState.ErrorState ->{
                         Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
                     }
                 }

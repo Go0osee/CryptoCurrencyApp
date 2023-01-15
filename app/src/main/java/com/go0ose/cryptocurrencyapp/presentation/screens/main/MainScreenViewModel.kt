@@ -6,7 +6,8 @@ import com.go0ose.cryptocurrencyapp.data.retrofit.RetrofitClient.SORT_BY_ALPHABE
 import com.go0ose.cryptocurrencyapp.data.retrofit.RetrofitClient.SORT_BY_MARKET_CAP
 import com.go0ose.cryptocurrencyapp.data.retrofit.RetrofitClient.SORT_BY_PRICE
 import com.go0ose.cryptocurrencyapp.domain.CryptoInteractor
-import com.go0ose.cryptocurrencyapp.presentation.model.MainState
+import com.go0ose.cryptocurrencyapp.presentation.model.Coin
+import com.go0ose.cryptocurrencyapp.presentation.model.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -17,27 +18,32 @@ class MainScreenViewModel(
 
     private var page = 1
     var sortId = 2
+    val items = mutableListOf<Coin>()
 
-    private val _state = MutableStateFlow<MainState>(MainState.LoadingState)
-    val state: StateFlow<MainState> = _state
+    private val _state = MutableStateFlow<UiState>(UiState.LoadingState)
+    val state: StateFlow<UiState> = _state
 
 
     fun loadCoinsFromDataBase() {
-        _state.value = MainState.SuccessState(emptyList())
+        _state.value = UiState.SuccessState<List<Coin>>(emptyList())
+        items.clear()
         viewModelScope.launch {
-            _state.value = MainState.SuccessState(cryptoInteractor.getCryptoListFromDataBase())
+            val list = cryptoInteractor.getCryptoListFromDataBase()
+            items.addAll(list)
+            _state.value = UiState.SuccessState(list)
         }
     }
 
     fun loadNextPage() {
-        _state.value = MainState.LoadingState
+        _state.value = UiState.LoadingState
         page++
         loadCoinsFromApi()
     }
 
 
     fun refresh() {
-        _state.value = MainState.LoadingState
+        _state.value = UiState.LoadingState
+        items.clear()
         page = 1
         loadCoinsFromApi()
     }
@@ -45,11 +51,11 @@ class MainScreenViewModel(
     private fun loadCoinsFromApi() {
         viewModelScope.launch {
             try {
-                _state.value = MainState.SuccessState(
-                    cryptoInteractor.getCryptoListFromApi(chooseSortTypeById(sortId), page)
-                )
+                val list = cryptoInteractor.getCryptoListFromApi(chooseSortTypeById(sortId), page)
+                items.addAll(list)
+                _state.value = UiState.SuccessState(items)
             } catch (e: Throwable) {
-                _state.value = MainState.ErrorState(e.message.toString())
+                _state.value = UiState.ErrorState(e.message.toString())
             }
         }
     }

@@ -1,8 +1,14 @@
 package com.go0ose.cryptocurrencyapp.utils
 
+import android.app.AlertDialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.widget.ImageView
+import android.widget.TextView
+import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.go0ose.cryptocurrencyapp.R
 
 fun ImageView.setImageByUrl(url: String?) {
     Glide.with(context)
@@ -15,4 +21,24 @@ fun ImageView.setImageByUri(uri: String?) {
     Glide.with(context)
         .load(uri)
         .into(this)
+}
+
+fun Fragment.showDialog(
+    onPositiveButtonClick: () -> Unit,
+) {
+    val builder = AlertDialog.Builder(this.requireContext())
+    val dialogLayout = layoutInflater.inflate(R.layout.dialog_alert_no_internet_connection, null)
+    val positiveButton = dialogLayout.findViewById<TextView>(R.id.tryAgain)
+    builder.setCancelable(false)
+    builder.setView(dialogLayout)
+
+    val alertDialog = builder.create()
+    alertDialog.window?.setBackgroundDrawable(
+        ColorDrawable(Color.TRANSPARENT)
+    )
+    positiveButton.setOnClickListener {
+        onPositiveButtonClick()
+        alertDialog.cancel()
+    }
+    alertDialog.show()
 }

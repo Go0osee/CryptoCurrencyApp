@@ -1,6 +1,7 @@
 package com.go0ose.cryptocurrencyapp.presentation.screens.main.recycler
 
 import android.view.ViewGroup
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.go0ose.cryptocurrencyapp.presentation.model.Coin
 
@@ -20,13 +21,16 @@ class MainScreenAdapter(
 
     override fun getItemCount() = items.size
 
-    fun submitList(data: List<Coin>) {
-        items.addAll(data)
-        notifyDataSetChanged()
-    }
-
     fun clearList() {
         items.clear()
         notifyDataSetChanged()
+    }
+
+    fun updateItems(newItems: List<Coin>) {
+        val diffCallback = MainDiffCallback(items, newItems)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        items.clear()
+        items.addAll(newItems)
+        diffResult.dispatchUpdatesTo(this)
     }
 }

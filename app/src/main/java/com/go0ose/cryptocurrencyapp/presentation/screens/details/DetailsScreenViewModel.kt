@@ -3,7 +3,7 @@ package com.go0ose.cryptocurrencyapp.presentation.screens.details
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.go0ose.cryptocurrencyapp.domain.CryptoInteractor
-import com.go0ose.cryptocurrencyapp.presentation.model.DetailsState
+import com.go0ose.cryptocurrencyapp.presentation.model.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -12,24 +12,24 @@ class DetailsScreenViewModel(
     private val cryptoInteractor: CryptoInteractor
 ) : ViewModel() {
 
-    private val _state = MutableStateFlow<DetailsState>(DetailsState.LoadingState)
-    val state: StateFlow<DetailsState> = _state
+    private val _state = MutableStateFlow<UiState>(UiState.LoadingState)
+    val state: StateFlow<UiState> = _state
 
     var id = ""
     private var amount = ""
 
     fun loadDetails(days: String) {
         if (days != amount) {
-            _state.value = DetailsState.LoadingState
+            _state.value = UiState.LoadingState
             amount = days
             viewModelScope.launch {
                 try {
                     _state.value =
-                        DetailsState.SuccessState(
+                        UiState.SuccessState(
                             cryptoInteractor.getCoinDetailsFromApi(id, amount)
                         )
                 } catch (e: Throwable) {
-                    _state.value = DetailsState.ErrorState(e.message.toString())
+                    _state.value = UiState.ErrorState(e.message.toString())
                 }
             }
         }

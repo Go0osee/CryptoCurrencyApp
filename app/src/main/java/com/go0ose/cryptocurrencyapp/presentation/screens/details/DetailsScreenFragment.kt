@@ -23,7 +23,7 @@ import com.go0ose.cryptocurrencyapp.data.retrofit.RetrofitClient.ONE_WEEK
 import com.go0ose.cryptocurrencyapp.data.retrofit.RetrofitClient.ONE_YEAR
 import com.go0ose.cryptocurrencyapp.databinding.FragmentDetailsScreenBinding
 import com.go0ose.cryptocurrencyapp.presentation.model.CoinDetails
-import com.go0ose.cryptocurrencyapp.presentation.model.DetailsState
+import com.go0ose.cryptocurrencyapp.presentation.model.UiState
 import com.go0ose.cryptocurrencyapp.utils.formatMarketCap
 import com.go0ose.cryptocurrencyapp.utils.setImageByUrl
 import kotlinx.coroutines.flow.collectLatest
@@ -64,16 +64,16 @@ class DetailsScreenFragment : Fragment(R.layout.fragment_details_screen) {
         lifecycleScope.launchWhenStarted {
             viewModel.state.collectLatest { state ->
                 when (state) {
-                    is DetailsState.SuccessState -> {
+                    is UiState.SuccessState<*> -> {
                         binding.animImage.visibility = View.GONE
                         animation.stop()
-                        initView(state.coinDetails)
+                        initView(state.data as CoinDetails)
                     }
-                    is DetailsState.LoadingState -> {
+                    is UiState.LoadingState -> {
                         binding.animImage.visibility = View.VISIBLE
                         animation.start()
                     }
-                    is DetailsState.ErrorState -> {
+                    is UiState.ErrorState -> {
                         binding.animImage.visibility = View.GONE
                         animation.stop()
                         Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
