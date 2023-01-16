@@ -27,6 +27,10 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/resources" />
         </provider>
+        <service
+            android:name=".presentation.CheckConnectionService"
+            android:enabled="true"
+            android:exported="false" />
         <activity
             android:name=".presentation.MainActivity"
             android:exported="true"
