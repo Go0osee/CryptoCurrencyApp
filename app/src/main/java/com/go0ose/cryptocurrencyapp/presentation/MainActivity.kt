@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         initNavController()
+        // TODO!@# Move "show_dialog" to constant and use it in both classes
         registerReceiver(broadcastReceiver, IntentFilter("show_dialog"))
         startService(Intent(this, CheckConnectionService()::class.java))
     }

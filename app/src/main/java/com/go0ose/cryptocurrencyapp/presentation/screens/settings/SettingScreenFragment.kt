@@ -108,7 +108,7 @@ class SettingScreenFragment : Fragment(R.layout.fragment_setting_screen) {
                 viewModel.user.collectLatest { user ->
                     if (user.avatar.isNotEmpty()) {
                         binding.avatar.setImageByUri(user.avatar)
-                    }
+                    } // TODO!@# use construction with(...) { ... } in all places of project where it is possible
                     binding.firstName.setText(user.firstName, TextView.BufferType.EDITABLE)
                     binding.lastName.setText(user.lastName, TextView.BufferType.EDITABLE)
                     binding.dayOfBirth.setText(user.dayOfBirth, TextView.BufferType.EDITABLE)

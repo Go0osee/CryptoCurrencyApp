@@ -91,6 +91,7 @@ class DetailsScreenFragment : Fragment(R.layout.fragment_details_screen) {
             item1day.setOnClickListener {
                 deselectAll()
                 it.setBackgroundResource(R.drawable.background_item_chart)
+                // TODO!@# Is it necessary to do cast here?
                 (it as TextView).setTextColor(Color.WHITE)
                 viewModel.loadDetails(ONE_DAY)
             }

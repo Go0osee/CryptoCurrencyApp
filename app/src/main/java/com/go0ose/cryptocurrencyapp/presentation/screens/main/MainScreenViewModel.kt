@@ -23,7 +23,7 @@ class MainScreenViewModel(
     private val _state = MutableStateFlow<UiState>(UiState.LoadingState)
     val state: StateFlow<UiState> = _state
 
-
+    // TODO!@# Create single method for incoming actions (intents) from view for MVI
     fun loadCoinsFromDataBase() {
         _state.value = UiState.SuccessState<List<Coin>>(emptyList())
         items.clear()

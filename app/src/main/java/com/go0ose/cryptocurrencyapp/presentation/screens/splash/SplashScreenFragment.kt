@@ -13,6 +13,7 @@ import com.go0ose.cryptocurrencyapp.databinding.FragmentSplashScreenBinding
 import com.go0ose.cryptocurrencyapp.presentation.model.UiState
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
+// TODO!@# Crash on android with API 31
 class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
 
     private val binding: FragmentSplashScreenBinding by viewBinding()

@@ -16,10 +16,11 @@ class SettingScreenViewModel(
 
     var imageUri: String = ""
     var hasUser = false
-
+    // TODO!@# Rewrite to sealed class?
     private val _stateSaveButton = MutableStateFlow<Boolean>(false)
     val stateSaveButton: StateFlow<Boolean> = _stateSaveButton
 
+    // TODO!@# Remove explicit arguments of type in project
     private val _user = MutableStateFlow<UserEntity>(UserEntity(1, "", "", "", ""))
     val user: StateFlow<UserEntity> = _user
 
@@ -30,7 +31,9 @@ class SettingScreenViewModel(
         runFlow()
     }
 
+    // TODO!@# Bad method naming
     private fun runFlow() {
+        // TODO!@# Same here
         cryptoInteractor.getFlowUser().map { user ->
             if(user != null) {
                 imageUri = user.avatar
