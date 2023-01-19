@@ -20,7 +20,7 @@ class CryptoInteractorImpl(
                 cryptoResponse.toCoin()
             }.orEmpty()
         } else {
-            throw Throwable(response.errorBody().toString())
+            throw Throwable(response.code().toString())
         }
     }
 
@@ -45,11 +45,11 @@ class CryptoInteractorImpl(
         return if (response.isSuccessful) {
             response.body()?.toCoinDetails()!!
         } else {
-            throw Throwable(response.errorBody().toString())
+            throw Throwable(response.code().toString())
         }
     }
 
-    override fun getFlowUser(): Flow<UserEntity> {
+    override fun getUserFromDatabase(): Flow<UserEntity> {
         return cryptoRepository.getFlowUser()
     }
 

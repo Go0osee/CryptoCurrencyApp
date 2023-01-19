@@ -11,6 +11,7 @@ import androidx.navigation.Navigation.findNavController
 import androidx.navigation.ui.setupWithNavController
 import com.go0ose.cryptocurrencyapp.R
 import com.go0ose.cryptocurrencyapp.databinding.ActivityMainBinding
+import com.go0ose.cryptocurrencyapp.utils.SHOW_DIALOG
 import com.go0ose.cryptocurrencyapp.utils.showNoConnectionDialog
 
 class MainActivity : AppCompatActivity() {
@@ -32,8 +33,7 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
         initNavController()
-        // TODO!@# Move "show_dialog" to constant and use it in both classes
-        registerReceiver(broadcastReceiver, IntentFilter("show_dialog"))
+        registerReceiver(broadcastReceiver, IntentFilter(SHOW_DIALOG))
         startService(Intent(this, CheckConnectionService()::class.java))
     }
 

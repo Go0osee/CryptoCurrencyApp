@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.go0ose.cryptocurrencyapp.data.storage.entity.UserEntity
 import com.go0ose.cryptocurrencyapp.domain.CryptoInteractor
+import com.go0ose.cryptocurrencyapp.presentation.model.SettingState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
@@ -16,28 +17,19 @@ class SettingScreenViewModel(
 
     var imageUri: String = ""
     var hasUser = false
-    // TODO!@# Rewrite to sealed class?
-    private val _stateSaveButton = MutableStateFlow<Boolean>(false)
-    val stateSaveButton: StateFlow<Boolean> = _stateSaveButton
 
-    // TODO!@# Remove explicit arguments of type in project
-    private val _user = MutableStateFlow<UserEntity>(UserEntity(1, "", "", "", ""))
-    val user: StateFlow<UserEntity> = _user
-
-    private val _stateSave = MutableStateFlow<Boolean>(false)
-    val stateSave: StateFlow<Boolean> = _stateSave
+    private val _state = MutableStateFlow<SettingState>(SettingState.SaveButtonInactive)
+    val state: StateFlow<SettingState> = _state
 
     init {
-        runFlow()
+        initLoadingUserFromDatabase()
     }
 
-    // TODO!@# Bad method naming
-    private fun runFlow() {
-        // TODO!@# Same here
-        cryptoInteractor.getFlowUser().map { user ->
-            if(user != null) {
+    private fun initLoadingUserFromDatabase() {
+        cryptoInteractor.getUserFromDatabase().map { user ->
+            if (user != null) {
                 imageUri = user.avatar
-                _user.value = user
+                _state.value = SettingState.LoadedUserFromDatabase(user)
                 hasUser = true
             }
         }.launchIn(viewModelScope)
@@ -59,13 +51,12 @@ class SettingScreenViewModel(
                 cryptoInteractor.insertUser(user)
             }
         }.invokeOnCompletion {
-            _stateSave.value = true
-            _stateSave.value = false
+            _state.value = SettingState.SuccessSave
         }
     }
 
-    fun setState(state: Boolean) {
-        _stateSaveButton.value = state
+    fun setState(state: SettingState) {
+        _state.value = state
     }
 
 }

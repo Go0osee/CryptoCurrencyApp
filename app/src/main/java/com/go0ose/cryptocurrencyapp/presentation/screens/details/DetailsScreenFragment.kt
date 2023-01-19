@@ -2,14 +2,14 @@ package com.go0ose.cryptocurrencyapp.presentation.screens.details
 
 import android.annotation.SuppressLint
 import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
-import android.widget.TextView
-import android.widget.Toast
 import androidx.core.content.ContextCompat.getColor
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
+import androidx.vectordrawable.graphics.drawable.Animatable2Compat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.github.mikephil.charting.data.Entry
@@ -24,8 +24,7 @@ import com.go0ose.cryptocurrencyapp.data.retrofit.RetrofitClient.ONE_YEAR
 import com.go0ose.cryptocurrencyapp.databinding.FragmentDetailsScreenBinding
 import com.go0ose.cryptocurrencyapp.presentation.model.CoinDetails
 import com.go0ose.cryptocurrencyapp.presentation.model.UiState
-import com.go0ose.cryptocurrencyapp.utils.formatMarketCap
-import com.go0ose.cryptocurrencyapp.utils.setImageByUrl
+import com.go0ose.cryptocurrencyapp.utils.*
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -41,17 +40,22 @@ class DetailsScreenFragment : Fragment(R.layout.fragment_details_screen) {
         initClickListeners()
         initAnimation()
         initToolbar(
-            arguments?.getString("icon"),
-            arguments?.getString("name")
+            arguments?.getString(ICON),
+            arguments?.getString(NAME)
         )
         initObservers()
-        viewModel.id = arguments?.getString("id")!!
+        viewModel.id = arguments?.getString(ID)!!
         viewModel.loadDetails(ONE_DAY)
     }
 
     private fun initAnimation() {
         animation =
             AnimatedVectorDrawableCompat.create(requireContext(), R.drawable.anim_loading)!!
+        animation.registerAnimationCallback(object : Animatable2Compat.AnimationCallback() {
+            override fun onAnimationEnd(drawable: Drawable?) {
+                animation.start()
+            }
+        })
         binding.animImage.setImageDrawable(animation)
     }
 
@@ -76,7 +80,7 @@ class DetailsScreenFragment : Fragment(R.layout.fragment_details_screen) {
                     is UiState.ErrorState -> {
                         binding.animImage.visibility = View.GONE
                         animation.stop()
-                        Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                        requireContext().showToast(requireContext().decipherError(state.message))
                     }
                 }
             }
@@ -91,32 +95,31 @@ class DetailsScreenFragment : Fragment(R.layout.fragment_details_screen) {
             item1day.setOnClickListener {
                 deselectAll()
                 it.setBackgroundResource(R.drawable.background_item_chart)
-                // TODO!@# Is it necessary to do cast here?
-                (it as TextView).setTextColor(Color.WHITE)
+                item1day.setTextColor(Color.WHITE)
                 viewModel.loadDetails(ONE_DAY)
             }
             item7days.setOnClickListener {
                 deselectAll()
                 it.setBackgroundResource(R.drawable.background_item_chart)
-                (it as TextView).setTextColor(Color.WHITE)
+                item7days.setTextColor(Color.WHITE)
                 viewModel.loadDetails(ONE_WEEK)
             }
             item30days.setOnClickListener {
                 deselectAll()
                 it.setBackgroundResource(R.drawable.background_item_chart)
-                (it as TextView).setTextColor(Color.WHITE)
+                item30days.setTextColor(Color.WHITE)
                 viewModel.loadDetails(ONE_MONTH)
             }
             item365days.setOnClickListener {
                 deselectAll()
                 it.setBackgroundResource(R.drawable.background_item_chart)
-                (it as TextView).setTextColor(Color.WHITE)
+                item365days.setTextColor(Color.WHITE)
                 viewModel.loadDetails(ONE_YEAR)
             }
             itemAll.setOnClickListener {
                 deselectAll()
                 it.setBackgroundResource(R.drawable.background_item_chart)
-                (it as TextView).setTextColor(Color.WHITE)
+                itemAll.setTextColor(Color.WHITE)
                 viewModel.loadDetails("")
                 viewModel.loadDetails(ALL)
             }
@@ -143,11 +146,11 @@ class DetailsScreenFragment : Fragment(R.layout.fragment_details_screen) {
     private fun initView(coinDetails: CoinDetails) {
         with(binding) {
 
-            val cPrice = arguments?.getDouble("price")!!
+            val cPrice = arguments?.getDouble(PRICE)!!
             val format = viewModel.chooseFormat(cPrice)
 
             price.text = format.format(cPrice) + " $"
-            marketCap.text = "$ " + arguments?.getDouble("marketCap")?.let { formatMarketCap(it) }
+            marketCap.text = "$ " + arguments?.getDouble(MARKET_CAP)?.let { formatMarketCap(it) }
             changePercentage.text = coinDetails.changePercentage
             maxPrice.text = format.format(coinDetails.maxPrice) + " $"
             minPrice.text = format.format(coinDetails.minPrice) + " $"
@@ -172,7 +175,7 @@ class DetailsScreenFragment : Fragment(R.layout.fragment_details_screen) {
             description.isEnabled = false
             legend.isEnabled = false
 
-            val set = LineDataSet(listEntry, "chart").apply {
+            val set = LineDataSet(listEntry, CHART).apply {
                 color = getColor(requireContext(), R.color.second_color)
                 lineWidth = 2f
                 setDrawCircles(false)

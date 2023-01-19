@@ -25,6 +25,7 @@ fun ImageView.setImageByUri(uri: String?) {
         .load(uri)
         .into(this)
 }
+
 fun FragmentActivity.showNoConnectionDialog() {
     val builder = AlertDialog.Builder(this)
     val dialogLayout =
@@ -39,8 +40,8 @@ fun FragmentActivity.showNoConnectionDialog() {
     )
     positiveButton.setOnClickListener {
         alertDialog.cancel()
-        if(!isOnline()){
-            showNoConnectionDialog ()
+        if (!isOnline()) {
+            showNoConnectionDialog()
         }
     }
     alertDialog.show()

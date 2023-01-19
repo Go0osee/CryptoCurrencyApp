@@ -21,6 +21,7 @@ import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.go0ose.cryptocurrencyapp.R
 import com.go0ose.cryptocurrencyapp.databinding.FragmentSettingScreenBinding
+import com.go0ose.cryptocurrencyapp.presentation.model.SettingState
 import com.go0ose.cryptocurrencyapp.utils.setImageByUri
 import com.google.android.material.datepicker.MaterialDatePicker
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -91,33 +92,29 @@ class SettingScreenFragment : Fragment(R.layout.fragment_setting_screen) {
     private fun initObservers() {
         with(binding) {
             lifecycleScope.launchWhenStarted {
-                viewModel.stateSaveButton.collectLatest { state ->
+                viewModel.state.collectLatest { state ->
                     when (state) {
-                        true -> {
+                        is SettingState.SuccessSave -> {
+                            Snackbar.make(binding.root, getString(R.string.saved), Snackbar.LENGTH_SHORT).show()
+                        }
+                        is SettingState.SaveButtonActive -> {
                             toolbar.menu.findItem(R.id.save).isEnabled = true
                             toolbar.menu.findItem(R.id.save).setIcon(R.drawable.ic_save_unlock)
                         }
-                        false -> {
+                        is SettingState.SaveButtonInactive -> {
                             toolbar.menu.findItem(R.id.save).isEnabled = false
                             toolbar.menu.findItem(R.id.save).setIcon(R.drawable.ic_save_lock)
                         }
-                    }
-                }
-            }
-            lifecycleScope.launchWhenStarted {
-                viewModel.user.collectLatest { user ->
-                    if (user.avatar.isNotEmpty()) {
-                        binding.avatar.setImageByUri(user.avatar)
-                    } // TODO!@# use construction with(...) { ... } in all places of project where it is possible
-                    binding.firstName.setText(user.firstName, TextView.BufferType.EDITABLE)
-                    binding.lastName.setText(user.lastName, TextView.BufferType.EDITABLE)
-                    binding.dayOfBirth.setText(user.dayOfBirth, TextView.BufferType.EDITABLE)
-                }
-            }
-            lifecycleScope.launchWhenStarted {
-                viewModel.stateSave.collectLatest { state ->
-                    if(state){
-                        Snackbar.make(binding.root, getString(R.string.saved), Snackbar.LENGTH_SHORT).show()
+                        is SettingState.LoadedUserFromDatabase -> {
+                            with(binding) {
+                                if (state.user.avatar.isNotEmpty()) {
+                                    avatar.setImageByUri(state.user.avatar)
+                                }
+                                firstName.setText(state.user.firstName, TextView.BufferType.EDITABLE)
+                                lastName.setText(state.user.lastName, TextView.BufferType.EDITABLE)
+                                dayOfBirth.setText(state.user.dayOfBirth, TextView.BufferType.EDITABLE)
+                            }
+                        }
                     }
                 }
             }
@@ -135,9 +132,9 @@ class SettingScreenFragment : Fragment(R.layout.fragment_setting_screen) {
             }
             toolbar.menu.findItem(R.id.save).setOnMenuItemClickListener {
                 viewModel.saveToDataBase(
-                    binding.firstName.text.toString(),
-                    binding.lastName.text.toString(),
-                    binding.dayOfBirth.text.toString(),
+                    firstName.text.toString(),
+                    lastName.text.toString(),
+                    dayOfBirth.text.toString(),
                 )
                 true
             }
@@ -149,17 +146,17 @@ class SettingScreenFragment : Fragment(R.layout.fragment_setting_screen) {
 
             firstName.addTextChangedListener {
                 if (firstName.text.length in 1..20 && lastName.text.length in 1..20) {
-                    viewModel.setState(true)
+                    viewModel.setState(SettingState.SaveButtonActive)
                 } else {
-                    viewModel.setState(false)
+                    viewModel.setState(SettingState.SaveButtonInactive)
                 }
             }
 
             lastName.addTextChangedListener {
                 if (firstName.text.length in 1..20 && lastName.text.length in 1..20) {
-                    viewModel.setState(true)
+                    viewModel.setState(SettingState.SaveButtonActive)
                 } else {
-                    viewModel.setState(false)
+                    viewModel.setState(SettingState.SaveButtonInactive)
                 }
             }
         }

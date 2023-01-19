@@ -5,7 +5,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.go0ose.cryptocurrencyapp.presentation.model.Coin
 
-// TODO!@# It is better to use ListAdapter class with pagination (no need to rewrite it)
 class MainScreenAdapter(
     private val onItemClickListener: OnItemClickListener
 ) : RecyclerView.Adapter<MainScreenViewHolder>() {
@@ -23,9 +22,7 @@ class MainScreenAdapter(
     override fun getItemCount() = items.size
 
     fun clearList() {
-        items.clear()
-        // TODO!@# Resolve all lint warnings in project
-        notifyDataSetChanged()
+        updateItems(emptyList())
     }
 
     fun updateItems(newItems: List<Coin>) {

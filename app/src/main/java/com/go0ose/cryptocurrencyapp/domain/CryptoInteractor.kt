@@ -15,7 +15,7 @@ interface CryptoInteractor {
 
     suspend fun getCoinDetailsFromApi(id: String, days: String): CoinDetails
 
-    fun getFlowUser(): Flow<UserEntity>
+    fun getUserFromDatabase(): Flow<UserEntity>
 
     suspend fun insertUser(user: UserEntity)
 

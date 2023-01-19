@@ -24,4 +24,6 @@
     <string name="saved">Saved</string>
     <string name="no_connection_to_the_internet">No connection to the internet</string>
     <string name="try_again">Try Again</string>
+    <string name="too_many_requests">Too many requests, please try again later</string>
+    <string name="сonnection_error">Connection error</string>
 </resources>

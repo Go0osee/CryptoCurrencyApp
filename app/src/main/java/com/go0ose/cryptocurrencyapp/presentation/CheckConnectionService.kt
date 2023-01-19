@@ -3,6 +3,7 @@ package com.go0ose.cryptocurrencyapp.presentation
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import com.go0ose.cryptocurrencyapp.utils.SHOW_DIALOG
 import com.go0ose.cryptocurrencyapp.utils.isOnline
 import kotlinx.coroutines.*
 import kotlin.coroutines.CoroutineContext
@@ -17,11 +18,16 @@ class CheckConnectionService : Service(), CoroutineScope {
         throw UnsupportedOperationException("Not yet implemented")
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        job.cancel()
+    }
+
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         launch {
             while (true) {
                 if (!applicationContext.isOnline()) {
-                    sendBroadcast(Intent("show_dialog"))
+                    sendBroadcast(Intent(SHOW_DIALOG))
                 }
                 delay(13_000L)
             }

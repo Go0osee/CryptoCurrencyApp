@@ -6,6 +6,7 @@ import com.go0ose.cryptocurrencyapp.data.retrofit.RetrofitClient.SORT_BY_ALPHABE
 import com.go0ose.cryptocurrencyapp.data.retrofit.RetrofitClient.SORT_BY_MARKET_CAP
 import com.go0ose.cryptocurrencyapp.data.retrofit.RetrofitClient.SORT_BY_PRICE
 import com.go0ose.cryptocurrencyapp.domain.CryptoInteractor
+import com.go0ose.cryptocurrencyapp.presentation.model.ActionMainScreen
 import com.go0ose.cryptocurrencyapp.presentation.model.Coin
 import com.go0ose.cryptocurrencyapp.presentation.model.UiState
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,8 +24,22 @@ class MainScreenViewModel(
     private val _state = MutableStateFlow<UiState>(UiState.LoadingState)
     val state: StateFlow<UiState> = _state
 
-    // TODO!@# Create single method for incoming actions (intents) from view for MVI
-    fun loadCoinsFromDataBase() {
+
+    fun doWork(action: ActionMainScreen) {
+        when (action) {
+            is ActionMainScreen.LoadNextPage -> {
+                loadNextPage()
+            }
+            is ActionMainScreen.Refresh -> {
+                refresh()
+            }
+            is ActionMainScreen.LoadCoinsFromDataBase -> {
+                loadCoinsFromDataBase()
+            }
+        }
+    }
+
+    private fun loadCoinsFromDataBase() {
         _state.value = UiState.SuccessState<List<Coin>>(emptyList())
         items.clear()
         viewModelScope.launch {
@@ -34,14 +49,14 @@ class MainScreenViewModel(
         }
     }
 
-    fun loadNextPage() {
+    private fun loadNextPage() {
         _state.value = UiState.LoadingState
         page++
         loadCoinsFromApi()
     }
 
 
-    fun refresh() {
+    private fun refresh() {
         _state.value = UiState.LoadingState
         items.clear()
         page = 1

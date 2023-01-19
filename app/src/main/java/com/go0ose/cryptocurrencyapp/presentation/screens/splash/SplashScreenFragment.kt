@@ -1,7 +1,7 @@
 package com.go0ose.cryptocurrencyapp.presentation.screens.splash
 
+import android.annotation.SuppressLint
 import android.graphics.drawable.Drawable
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
@@ -11,9 +11,12 @@ import by.kirich1409.viewbindingdelegate.viewBinding
 import com.go0ose.cryptocurrencyapp.R
 import com.go0ose.cryptocurrencyapp.databinding.FragmentSplashScreenBinding
 import com.go0ose.cryptocurrencyapp.presentation.model.UiState
+import com.go0ose.cryptocurrencyapp.utils.decipherError
+import com.go0ose.cryptocurrencyapp.utils.showToast
+import kotlinx.coroutines.delay
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-// TODO!@# Crash on android with API 31
+@SuppressLint("CustomSplashScreen")
 class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
 
     private val binding: FragmentSplashScreenBinding by viewBinding()
@@ -41,7 +44,11 @@ class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
                         animation.start()
                     }
                     is UiState.ErrorState ->{
-                        Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                        if (state.message == "429"){
+                            requireContext().showToast(requireContext().decipherError(state.message))
+                        }
+                        delay(3000)
+                        initLoadingData()
                     }
                 }
             }
@@ -53,7 +60,7 @@ class SplashScreenFragment : Fragment(R.layout.fragment_splash_screen) {
             AnimatedVectorDrawableCompat.create(requireContext(), R.drawable.anim_loading)!!
         animation.registerAnimationCallback(object : Animatable2Compat.AnimationCallback() {
             override fun onAnimationEnd(drawable: Drawable?) {
-                binding.animImage.post { animation.start() }
+                animation.start()
             }
         })
         binding.animImage.setImageDrawable(animation)

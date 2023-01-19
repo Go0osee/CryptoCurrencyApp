@@ -1,21 +1,24 @@
 package com.go0ose.cryptocurrencyapp.presentation.screens.main
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.View
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.vectordrawable.graphics.drawable.Animatable2Compat
 import androidx.vectordrawable.graphics.drawable.AnimatedVectorDrawableCompat
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.go0ose.cryptocurrencyapp.R
 import com.go0ose.cryptocurrencyapp.databinding.FragmentMainScreenBinding
+import com.go0ose.cryptocurrencyapp.presentation.model.ActionMainScreen
 import com.go0ose.cryptocurrencyapp.presentation.model.Coin
 import com.go0ose.cryptocurrencyapp.presentation.model.UiState
 import com.go0ose.cryptocurrencyapp.presentation.screens.main.recycler.MainScreenAdapter
 import com.go0ose.cryptocurrencyapp.presentation.screens.main.recycler.OnItemClickListener
+import com.go0ose.cryptocurrencyapp.utils.*
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -45,7 +48,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
 
         binding.recyclerView.adapter = adapter
         if (viewModel.items.isEmpty()) {
-            viewModel.loadCoinsFromDataBase()
+            viewModel.doWork(ActionMainScreen.LoadCoinsFromDataBase)
         }
         initAnimation()
         initObservers()
@@ -69,13 +72,14 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
                     if (viewModel.state.value != UiState.LoadingState &&
                         (visibleItemCount + firstVisibleItemPosition) >= totalItemCount
                     ) {
-                        viewModel.loadNextPage()
+                        viewModel.doWork(ActionMainScreen.LoadNextPage)
                     }
                 }
             }
         })
     }
 
+    @Suppress("UNCHECKED_CAST")
     private fun initObservers() {
 
         lifecycleScope.launchWhenStarted {
@@ -94,7 +98,8 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
                     is UiState.ErrorState -> {
                         binding.animImage.visibility = View.GONE
                         animation.stop()
-                        Toast.makeText(requireContext(), state.message, Toast.LENGTH_SHORT).show()
+                        binding.swipeRefresh.isRefreshing = false
+                        requireContext().showToast(requireContext().decipherError(state.message))
                     }
                 }
             }
@@ -104,13 +109,18 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
     private fun initAnimation() {
         animation =
             AnimatedVectorDrawableCompat.create(requireContext(), R.drawable.anim_loading)!!
+        animation.registerAnimationCallback(object : Animatable2Compat.AnimationCallback() {
+            override fun onAnimationEnd(drawable: Drawable?) {
+                animation.start()
+            }
+        })
         binding.animImage.setImageDrawable(animation)
     }
 
     private fun initSwipeRefreshListener() {
         binding.swipeRefresh.setOnRefreshListener {
             adapter.clearList()
-            viewModel.refresh()
+            viewModel.doWork(ActionMainScreen.Refresh)
         }
     }
 
@@ -130,7 +140,7 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
             .setPositiveButton(resources.getString(R.string.ok)) { _, _ ->
                 viewModel.sortId = dSortId
                 adapter.clearList()
-                viewModel.refresh()
+                viewModel.doWork(ActionMainScreen.Refresh)
             }
             .setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ ->
                 dialog.cancel()
@@ -148,10 +158,10 @@ class MainScreenFragment : Fragment(R.layout.fragment_main_screen) {
     }
 
     fun createBundle(coin: Coin) = Bundle().apply {
-        putString("icon", coin.image)
-        putString("name", coin.name)
-        putString("id", coin.id)
-        putDouble("price", coin.currentPrice)
-        putDouble("marketCap", coin.marketCap)
+        putString(ICON, coin.image)
+        putString(NAME, coin.name)
+        putString(ID, coin.id)
+        putDouble(PRICE, coin.currentPrice)
+        putDouble(MARKET_CAP, coin.marketCap)
     }
 }

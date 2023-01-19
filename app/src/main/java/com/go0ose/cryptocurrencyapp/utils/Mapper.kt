@@ -1,6 +1,8 @@
 package com.go0ose.cryptocurrencyapp.utils
 
+import android.content.Context
 import com.github.mikephil.charting.data.Entry
+import com.go0ose.cryptocurrencyapp.R
 import com.go0ose.cryptocurrencyapp.data.retrofit.CryptoResponse
 import com.go0ose.cryptocurrencyapp.data.retrofit.MarketChart
 import com.go0ose.cryptocurrencyapp.data.storage.entity.CryptoEntity
@@ -79,4 +81,11 @@ fun List<List<Double>>.toListEntry(): List<Entry> {
         )
     }
     return result
+}
+
+fun Context.decipherError(message: String): String {
+    return when (message) {
+        "429" -> getString(R.string.too_many_requests)
+        else -> getString(R.string.сonnection_error)
+    }
 }
